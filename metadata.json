@@ -1,0 +1,7 @@
+{
+  "name": "Nurul Haramain Travel - Solusi Umroh Amanah",
+  "description": "Landing page premium untuk travel Umroh dengan fitur paket harga, galeri pelanggan, fasilitas eksklusif, dan asisten AI.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
