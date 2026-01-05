@@ -1,34 +1,54 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Hero: React.FC = () => {
+  const [offsetY, setOffsetY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Use requestAnimationFrame for smoother performance
+      window.requestAnimationFrame(() => {
+        setOffsetY(window.scrollY);
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <section id="home" className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
-      {/* Background Overlay */}
+      {/* Background Container with Parallax Effect */}
       <div className="absolute inset-0 z-0">
         <img 
           src="https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&q=80&w=2000" 
           alt="Kaaba Background" 
-          className="w-full h-full object-cover"
+          className="w-full h-[120%] object-cover absolute top-0 left-0 transition-transform duration-75 ease-out"
+          style={{ 
+            // The 0.3 factor makes it move at 30% of scroll speed, creating depth
+            transform: `translate3d(0, ${offsetY * 0.3}px, 0) scale(1.1)`,
+            willChange: 'transform'
+          }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/80 to-black/40"></div>
+        {/* Gradient Overlay for Readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/85 via-emerald-950/60 to-black/40"></div>
       </div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10 text-white">
         <div className="max-w-3xl">
-          <span className="inline-block px-4 py-1.5 mb-6 bg-emerald-600/30 border border-emerald-500/30 rounded-full text-sm font-semibold tracking-wider uppercase animate-fade-in">
+          <span className="inline-block px-4 py-1.5 mb-6 bg-emerald-600/30 border border-emerald-500/30 rounded-full text-sm font-semibold tracking-wider uppercase animate-fade-in backdrop-blur-sm">
             Travel Umroh & Hajj Terpercaya
           </span>
           <h1 className="text-5xl md:text-7xl font-serif mb-6 leading-tight">
             Kembali ke Baitullah dengan <span className="text-emerald-400">Penuh Ketenangan</span>
           </h1>
-          <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed">
+          <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed max-w-2xl">
             Wujudkan impian ibadah Umroh Anda bersama pembimbing berpengalaman, fasilitas premium, dan pelayanan sepenuh hati. Amanah, nyaman, dan berkesan.
           </p>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             <a 
               href="#paket" 
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-bold text-center transition-all transform hover:scale-105 shadow-xl"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-bold text-center transition-all transform hover:scale-105 shadow-xl hover:shadow-emerald-600/25"
             >
               Lihat Paket Umroh
             </a>
@@ -43,8 +63,9 @@ const Hero: React.FC = () => {
       </div>
       
       {/* Scroll Indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-        <svg className="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center space-y-2 opacity-60">
+        <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Scroll Down</span>
+        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
       </div>

@@ -1,11 +1,45 @@
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import PackageCard from './components/PackageCard';
 import BookingForm from './components/BookingForm';
 import ChatBot from './components/ChatBot';
 import { PACKAGES, FACILITIES, FAQS } from './constants';
+
+const AnimatedGalleryImage: React.FC<{ src: string; className: string; delay?: number }> = ({ src, className, delay = 0 }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const domRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    if (domRef.current) {
+      observer.observe(domRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={domRef}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={`transition-all duration-1000 ease-out transform ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+      }`}
+    >
+      <img src={src} className={`${className} hover:scale-105 transition-transform duration-500`} alt="Gallery" />
+    </div>
+  );
+};
 
 const App: React.FC = () => {
   return (
@@ -92,20 +126,20 @@ const App: React.FC = () => {
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-4">
-              <img src="https://picsum.photos/400/500?random=1" className="w-full h-64 object-cover rounded-3xl" alt="Gallery" />
-              <img src="https://picsum.photos/400/300?random=2" className="w-full h-40 object-cover rounded-3xl" alt="Gallery" />
+              <AnimatedGalleryImage src="https://picsum.photos/400/500?random=1" className="w-full h-64 object-cover rounded-3xl shadow-lg" delay={0} />
+              <AnimatedGalleryImage src="https://picsum.photos/400/300?random=2" className="w-full h-40 object-cover rounded-3xl shadow-lg" delay={200} />
             </div>
             <div className="space-y-4 pt-8">
-              <img src="https://picsum.photos/400/300?random=3" className="w-full h-40 object-cover rounded-3xl" alt="Gallery" />
-              <img src="https://picsum.photos/400/500?random=4" className="w-full h-64 object-cover rounded-3xl" alt="Gallery" />
+              <AnimatedGalleryImage src="https://picsum.photos/400/300?random=3" className="w-full h-40 object-cover rounded-3xl shadow-lg" delay={100} />
+              <AnimatedGalleryImage src="https://picsum.photos/400/500?random=4" className="w-full h-64 object-cover rounded-3xl shadow-lg" delay={300} />
             </div>
             <div className="space-y-4">
-              <img src="https://picsum.photos/400/600?random=5" className="w-full h-72 object-cover rounded-3xl" alt="Gallery" />
-              <img src="https://picsum.photos/400/250?random=6" className="w-full h-32 object-cover rounded-3xl" alt="Gallery" />
+              <AnimatedGalleryImage src="https://picsum.photos/400/600?random=5" className="w-full h-72 object-cover rounded-3xl shadow-lg" delay={200} />
+              <AnimatedGalleryImage src="https://picsum.photos/400/250?random=6" className="w-full h-32 object-cover rounded-3xl shadow-lg" delay={400} />
             </div>
             <div className="space-y-4 pt-12">
-              <img src="https://picsum.photos/400/300?random=7" className="w-full h-40 object-cover rounded-3xl" alt="Gallery" />
-              <img src="https://picsum.photos/400/400?random=8" className="w-full h-56 object-cover rounded-3xl" alt="Gallery" />
+              <AnimatedGalleryImage src="https://picsum.photos/400/300?random=7" className="w-full h-40 object-cover rounded-3xl shadow-lg" delay={300} />
+              <AnimatedGalleryImage src="https://picsum.photos/400/400?random=8" className="w-full h-56 object-cover rounded-3xl shadow-lg" delay={500} />
             </div>
           </div>
         </div>
