@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Package, FAQItem, Facility } from './types';
+import { Package, FAQItem, Facility, Testimonial } from './types';
 
 export const PACKAGES: Package[] = [
   {
@@ -71,5 +71,43 @@ export const FAQS: FAQItem[] = [
   {
     question: 'Bagaimana sistem pembayarannya?',
     answer: 'Pembayaran bisa dilakukan dengan DP minimal Rp 5.000.000 dan pelunasan paling lambat 1 bulan sebelum keberangkatan.'
+  }
+];
+
+export const TESTIMONIALS: Testimonial[] = [
+  {
+    id: 't1',
+    name: 'Bp. Ahmad Fauzi & Keluarga',
+    quote: 'Pelayanan sangat luar biasa, hotel benar-benar di depan Masjidil Haram. Pembimbing sabar dan mengedukasi.',
+    image: 'https://images.unsplash.com/photo-1582213726892-277173bd3dc5?auto=format&fit=crop&q=80&w=800',
+    rating: 5
+  },
+  {
+    id: 't2',
+    name: 'Ibu Siti Aminah',
+    quote: 'Alhamdulillah, Umroh pertama saya terasa sangat tenang. Makanan Indonesianya enak-enak, serasa di rumah.',
+    image: 'https://images.unsplash.com/photo-1627662236973-4fda83581207?auto=format&fit=crop&q=80&w=800',
+    rating: 5
+  },
+  {
+    id: 't3',
+    name: 'Bp. Hendra Kusuma',
+    quote: 'Sangat profesional. Dari pendaftaran sampai pulang semua diurus dengan rapi. Sangat merekomendasikan Nurul Haramain.',
+    image: 'https://images.unsplash.com/photo-1605664041952-4a2855d9363b?auto=format&fit=crop&q=80&w=800',
+    rating: 5
+  },
+  {
+    id: 't4',
+    name: 'Keluarga Bp. Ridwan',
+    quote: 'Terima kasih atas bimbingannya. Anak-anak juga sangat nyaman selama perjalanan 12 hari ini.',
+    image: 'https://images.unsplash.com/photo-1584949091598-c31daaaa4aa9?auto=format&fit=crop&q=80&w=800',
+    rating: 5
+  },
+  {
+    id: 't5',
+    name: 'Bp. & Ibu Surya',
+    quote: 'Paket VIP-nya juara. Kereta cepat Haramain sangat membantu mobilitas kami antar kota suci.',
+    image: 'https://images.unsplash.com/photo-1600585154340-be6199f74709?auto=format&fit=crop&q=80&w=800',
+    rating: 5
   }
 ];

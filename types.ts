@@ -24,3 +24,11 @@ export interface Message {
   role: 'user' | 'model';
   text: string;
 }
+
+export interface Testimonial {
+  id: string;
+  name: string;
+  quote: string;
+  image: string;
+  rating: number;
+}

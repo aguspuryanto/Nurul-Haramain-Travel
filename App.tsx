@@ -5,9 +5,10 @@ import Hero from './components/Hero';
 import PackageCard from './components/PackageCard';
 import BookingForm from './components/BookingForm';
 import ChatBot from './components/ChatBot';
-import { PACKAGES, FACILITIES, FAQS } from './constants';
+import { PACKAGES, FACILITIES, FAQS, TESTIMONIALS } from './constants';
+import { Testimonial } from './types';
 
-const AnimatedGalleryImage: React.FC<{ src: string; className: string; delay?: number }> = ({ src, className, delay = 0 }) => {
+const TestimonialCard: React.FC<{ testimonial: Testimonial; delay?: number }> = ({ testimonial, delay = 0 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const domRef = useRef<HTMLDivElement>(null);
 
@@ -32,16 +33,44 @@ const AnimatedGalleryImage: React.FC<{ src: string; className: string; delay?: n
     <div
       ref={domRef}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`transition-all duration-1000 ease-out transform ${
+      className={`min-w-[300px] md:min-w-[400px] bg-white rounded-3xl p-8 shadow-xl border border-gray-100 transition-all duration-1000 ease-out transform ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
       }`}
     >
-      <img src={src} className={`${className} hover:scale-105 transition-transform duration-500`} alt="Gallery" />
+      <div className="flex items-center space-x-1 mb-4">
+        {[...Array(testimonial.rating)].map((_, i) => (
+          <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        ))}
+      </div>
+      <p className="text-gray-600 italic mb-8 leading-relaxed">"{testimonial.quote}"</p>
+      <div className="flex items-center space-x-4">
+        <img src={testimonial.image} alt={testimonial.name} className="w-14 h-14 rounded-2xl object-cover" />
+        <div>
+          <h4 className="font-bold text-gray-800">{testimonial.name}</h4>
+          <p className="text-emerald-600 text-xs font-semibold uppercase tracking-wider">Jamaah Umroh</p>
+        </div>
+      </div>
     </div>
   );
 };
 
 const App: React.FC = () => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -400, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 400, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -116,32 +145,54 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Gallery Section */}
-      <section id="galeri" className="py-24 bg-white">
+      {/* Testimonial Gallery Section */}
+      <section id="galeri" className="py-24 bg-white overflow-hidden">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-serif mb-4">Galeri Kebahagiaan Jamaah</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">Momen-momen berkesan para tamu Allah yang telah mempercayakan perjalanan spiritualnya bersama kami.</p>
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16">
+            <div className="max-w-2xl">
+              <div className="flex space-x-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+              <h2 className="text-4xl font-serif mb-4">Galeri Kebahagiaan Jamaah</h2>
+              <p className="text-gray-500">Kisah inspiratif dari para tamu Allah yang telah mempercayakan perjalanan spiritualnya bersama Nurul Haramain.</p>
+            </div>
+            <div className="flex space-x-3 mt-8 md:mt-0">
+              <button 
+                onClick={scrollLeft}
+                className="w-12 h-12 rounded-full border border-emerald-200 flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button 
+                onClick={scrollRight}
+                className="w-12 h-12 rounded-full border border-emerald-200 flex items-center justify-center text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="space-y-4">
-              <AnimatedGalleryImage src="https://picsum.photos/400/500?random=1" className="w-full h-64 object-cover rounded-3xl shadow-lg" delay={0} />
-              <AnimatedGalleryImage src="https://picsum.photos/400/300?random=2" className="w-full h-40 object-cover rounded-3xl shadow-lg" delay={200} />
-            </div>
-            <div className="space-y-4 pt-8">
-              <AnimatedGalleryImage src="https://picsum.photos/400/300?random=3" className="w-full h-40 object-cover rounded-3xl shadow-lg" delay={100} />
-              <AnimatedGalleryImage src="https://picsum.photos/400/500?random=4" className="w-full h-64 object-cover rounded-3xl shadow-lg" delay={300} />
-            </div>
-            <div className="space-y-4">
-              <AnimatedGalleryImage src="https://picsum.photos/400/600?random=5" className="w-full h-72 object-cover rounded-3xl shadow-lg" delay={200} />
-              <AnimatedGalleryImage src="https://picsum.photos/400/250?random=6" className="w-full h-32 object-cover rounded-3xl shadow-lg" delay={400} />
-            </div>
-            <div className="space-y-4 pt-12">
-              <AnimatedGalleryImage src="https://picsum.photos/400/300?random=7" className="w-full h-40 object-cover rounded-3xl shadow-lg" delay={300} />
-              <AnimatedGalleryImage src="https://picsum.photos/400/400?random=8" className="w-full h-56 object-cover rounded-3xl shadow-lg" delay={500} />
-            </div>
-          </div>
+        </div>
+
+        <div 
+          ref={scrollContainerRef}
+          className="flex space-x-6 overflow-x-auto pb-12 px-4 md:px-[calc(50vw-600px)] no-scrollbar scroll-smooth"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {TESTIMONIALS.map((testimonial, idx) => (
+            <TestimonialCard 
+              key={testimonial.id} 
+              testimonial={testimonial} 
+              delay={idx * 100} 
+            />
+          ))}
         </div>
       </section>
 
