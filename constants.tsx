@@ -1,8 +1,7 @@
 
-import React from 'react';
-import { Package, FAQItem, Facility, Testimonial } from './types';
+import { Package, FAQItem, Facility, Testimonial, BookingSubmission } from './types';
 
-export const PACKAGES: Package[] = [
+export const INITIAL_PACKAGES: Package[] = [
   {
     id: '1',
     name: 'Umroh Reguler Hemat',
@@ -29,6 +28,39 @@ export const PACKAGES: Package[] = [
     image: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&q=80&w=800',
     features: ['City Tour Istanbul', 'Menginap di Cappadocia', 'Visa Umroh & Turki', 'Penerbangan Full Service', 'Guide Berpengalaman'],
     isPopular: false
+  }
+];
+
+export const MOCK_BOOKINGS: BookingSubmission[] = [
+  {
+    id: 'B001',
+    name: 'Budi Santoso',
+    whatsapp: '081234567890',
+    packageId: '2',
+    packageName: 'Umroh VIP Premium',
+    message: 'Tanya jadwal keberangkatan Oktober',
+    date: '2024-05-20',
+    status: 'Pending'
+  },
+  {
+    id: 'B002',
+    name: 'Siti Rahma',
+    whatsapp: '085712341234',
+    packageId: '1',
+    packageName: 'Umroh Reguler Hemat',
+    message: 'Daftar untuk 2 orang',
+    date: '2024-05-19',
+    status: 'Dihubungi'
+  },
+  {
+    id: 'B003',
+    name: 'Andi Wijaya',
+    whatsapp: '081199887766',
+    packageId: '3',
+    packageName: 'Umroh Plus Turki',
+    message: 'Cek ketersediaan visa Turki',
+    date: '2024-05-18',
+    status: 'Terdaftar'
   }
 ];
 
@@ -94,20 +126,6 @@ export const TESTIMONIALS: Testimonial[] = [
     name: 'Bp. Hendra Kusuma',
     quote: 'Sangat profesional. Dari pendaftaran sampai pulang semua diurus dengan rapi. Sangat merekomendasikan Nurul Haramain.',
     image: 'https://images.unsplash.com/photo-1605664041952-4a2855d9363b?auto=format&fit=crop&q=80&w=800',
-    rating: 5
-  },
-  {
-    id: 't4',
-    name: 'Keluarga Bp. Ridwan',
-    quote: 'Terima kasih atas bimbingannya. Anak-anak juga sangat nyaman selama perjalanan 12 hari ini.',
-    image: 'https://images.unsplash.com/photo-1584949091598-c31daaaa4aa9?auto=format&fit=crop&q=80&w=800',
-    rating: 5
-  },
-  {
-    id: 't5',
-    name: 'Bp. & Ibu Surya',
-    quote: 'Paket VIP-nya juara. Kereta cepat Haramain sangat membantu mobilitas kami antar kota suci.',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6199f74709?auto=format&fit=crop&q=80&w=800',
     rating: 5
   }
 ];

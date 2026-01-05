@@ -32,3 +32,16 @@ export interface Testimonial {
   image: string;
   rating: number;
 }
+
+export type BookingStatus = 'Pending' | 'Dihubungi' | 'Terdaftar' | 'Batal';
+
+export interface BookingSubmission {
+  id: string;
+  name: string;
+  whatsapp: string;
+  packageId: string;
+  packageName: string;
+  message: string;
+  date: string;
+  status: BookingStatus;
+}

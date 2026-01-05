@@ -5,8 +5,12 @@ import Hero from './components/Hero';
 import PackageCard from './components/PackageCard';
 import BookingForm from './components/BookingForm';
 import ChatBot from './components/ChatBot';
-import { PACKAGES, FACILITIES, FAQS, TESTIMONIALS } from './constants';
-import { Testimonial } from './types';
+import DashboardCRM from './components/DashboardCRM';
+import PackageManager from './components/PackageManager';
+import { INITIAL_PACKAGES, FACILITIES, FAQS, TESTIMONIALS, MOCK_BOOKINGS } from './constants';
+import { Testimonial, Package, BookingSubmission, BookingStatus } from './types';
+
+type ViewMode = 'Landing' | 'CRM' | 'PackageManager';
 
 const TestimonialCard: React.FC<{ testimonial: Testimonial; delay?: number }> = ({ testimonial, delay = 0 }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -57,6 +61,9 @@ const TestimonialCard: React.FC<{ testimonial: Testimonial; delay?: number }> = 
 };
 
 const App: React.FC = () => {
+  const [view, setView] = useState<ViewMode>('Landing');
+  const [packages, setPackages] = useState<Package[]>(INITIAL_PACKAGES);
+  const [bookings, setBookings] = useState<BookingSubmission[]>(MOCK_BOOKINGS);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
@@ -70,6 +77,83 @@ const App: React.FC = () => {
       scrollContainerRef.current.scrollBy({ left: 400, behavior: 'smooth' });
     }
   };
+
+  const handleUpdateBookingStatus = (id: string, status: BookingStatus) => {
+    setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
+  };
+
+  const handleAddPackage = (pkg: Package) => {
+    setPackages(prev => [...prev, pkg]);
+  };
+
+  const handleDeletePackage = (id: string) => {
+    setPackages(prev => prev.filter(p => p.id !== id));
+  };
+
+  const handleUpdatePackage = (pkg: Package) => {
+    setPackages(prev => prev.map(p => p.id === pkg.id ? pkg : p));
+  };
+
+  if (view !== 'Landing') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex">
+        {/* Sidebar Admin */}
+        <aside className="w-64 bg-emerald-950 text-white flex flex-col p-6 space-y-8">
+          <div className="flex items-center space-x-2">
+            <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center">
+              <span className="font-bold text-xl">N</span>
+            </div>
+            <span className="text-xl font-bold">Admin Panel</span>
+          </div>
+
+          <nav className="flex-1 space-y-2">
+            <button 
+              onClick={() => setView('CRM')}
+              className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center space-x-3 ${view === 'CRM' ? 'bg-emerald-600' : 'hover:bg-white/5'}`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <span>CRM Pendaftar</span>
+            </button>
+            <button 
+              onClick={() => setView('PackageManager')}
+              className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center space-x-3 ${view === 'PackageManager' ? 'bg-emerald-600' : 'hover:bg-white/5'}`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              <span>Kelola Paket</span>
+            </button>
+          </nav>
+
+          <button 
+            onClick={() => setView('Landing')}
+            className="w-full bg-white/10 hover:bg-white/20 px-4 py-3 rounded-xl flex items-center space-x-3 transition-all"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span>Kembali ke Web</span>
+          </button>
+        </aside>
+
+        {/* Main Content Dashboard */}
+        <main className="flex-1 p-10 overflow-y-auto max-h-screen">
+          {view === 'CRM' ? (
+            <DashboardCRM bookings={bookings} onUpdateStatus={handleUpdateBookingStatus} />
+          ) : (
+            <PackageManager 
+              packages={packages} 
+              onAdd={handleAddPackage} 
+              onDelete={handleDeletePackage} 
+              onUpdate={handleUpdatePackage} 
+            />
+          )}
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -106,7 +190,7 @@ const App: React.FC = () => {
             <p className="text-gray-500 max-w-2xl mx-auto">Tersedia berbagai pilihan paket yang dapat disesuaikan dengan kebutuhan dan kenyamanan ibadah Anda.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-10">
-            {PACKAGES.map((pkg) => (
+            {packages.map((pkg) => (
               <PackageCard key={pkg.id} pkg={pkg} />
             ))}
           </div>
@@ -241,7 +325,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer with Admin Link */}
       <footer className="bg-white border-t border-gray-100 py-12">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
@@ -253,8 +337,14 @@ const App: React.FC = () => {
                 <span className="text-xl font-bold text-emerald-800">Nurul Haramain</span>
               </div>
               <p className="text-gray-500 text-sm leading-relaxed">
-                Menjadi partner terbaik dalam perjalanan spiritual Anda menuju Baitullah dengan pelayanan yang amanah dan terpercaya.
+                Partner spiritual amanah untuk perjalanan Umroh & Hajj Anda.
               </p>
+              <button 
+                onClick={() => setView('CRM')}
+                className="mt-6 text-[10px] text-gray-300 hover:text-emerald-600 transition-colors uppercase tracking-widest font-bold"
+              >
+                Admin Access
+              </button>
             </div>
             <div>
               <h5 className="font-bold mb-6">Tautan Cepat</h5>
@@ -262,7 +352,6 @@ const App: React.FC = () => {
                 <li><a href="#home" className="hover:text-emerald-600">Home</a></li>
                 <li><a href="#paket" className="hover:text-emerald-600">Paket Umroh</a></li>
                 <li><a href="#fasilitas" className="hover:text-emerald-600">Fasilitas</a></li>
-                <li><a href="#galeri" className="hover:text-emerald-600">Galeri</a></li>
               </ul>
             </div>
             <div>
@@ -270,25 +359,16 @@ const App: React.FC = () => {
               <ul className="space-y-3 text-sm text-gray-500">
                 <li>Izin Kemenag No. 123/2023</li>
                 <li>Sertifikasi PPIU</li>
-                <li>Syarat & Ketentuan</li>
                 <li>Kebijakan Privasi</li>
               </ul>
             </div>
             <div>
-              <h5 className="font-bold mb-6">Ikuti Kami</h5>
-              <div className="flex space-x-4">
-                <a href="#" className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-emerald-600 hover:text-white transition-all">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-emerald-600 hover:text-white transition-all">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.054 1.805.249 2.227.412.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.013 3.584-.07 4.85c-.054 1.17-.249 1.805-.413 2.227-.217.562-.477.96-.896 1.382-.42.419-.819.679-1.381.896-.422.164-1.057.36-2.227.413-1.266.057-1.646.07-4.85.07s-3.584-.013-4.85-.07c-1.17-.054-1.805-.249-2.227-.413-.562-.217-.96-.477-1.382-.896-.419-.42-.679-.819-.896-1.381-.164-.422-.36-1.057-.413-2.227-.057-1.266-.07-1.646-.07-4.85s.013-3.584.07-4.85c.054-1.17.249-1.805.413-2.227.217-.562.477-.96.896-1.382.42-.419.819-.679 1.381-.896.422-.164 1.057-.36 2.227-.413 1.266-.057 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-1.277.057-2.15.26-2.914.557-.79.307-1.459.718-2.124 1.384-.666.665-1.077 1.334-1.384 2.124-.297.764-.5 1.637-.557 2.914-.058 1.28-.072 1.688-.072 4.947s.014 3.667.072 4.947c.057 1.277.26 2.15.557 2.914.307.79.718 1.459 1.384 2.124.665.666 1.334 1.077 2.124 1.384.764.297 1.637.5 2.914.557 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c1.277-.057 2.15-.26 2.914-.557.79-.307 1.459-.718 2.124-1.384.666-.665 1.077-1.334 1.384-2.124.297-.764.5-1.637.557-2.914.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.057-1.277-.26-2.15-.557-2.914-.307-.79-.718-1.459-1.384-2.124-.665-.666-1.334-1.077-2.124-1.384-.764-.297-1.637-.5-2.914-.557-1.28-.058-1.688-.072-4.947-.072z"/><path d="M12 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                </a>
-              </div>
+              <h5 className="font-bold mb-6">WhatsApp</h5>
+              <p className="text-sm text-gray-500">+62 812 3456 7890</p>
             </div>
           </div>
-          <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
+          <div className="pt-8 border-t border-gray-100 text-center text-sm text-gray-400">
             <p>&copy; 2024 Nurul Haramain Travel. Seluruh Hak Cipta Dilindungi.</p>
-            <p className="mt-4 md:mt-0">Dibuat dengan penuh dedikasi untuk Jamaah Indonesia.</p>
           </div>
         </div>
       </footer>
