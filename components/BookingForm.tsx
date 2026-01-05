@@ -1,23 +1,64 @@
 
 import React, { useState } from 'react';
+import { Package, BookingSubmission } from '../types';
 
-const BookingForm: React.FC = () => {
+interface Props {
+  onSuccess: (data: Omit<BookingSubmission, 'id' | 'date' | 'status'>) => void;
+  packages: Package[];
+}
+
+const BookingForm: React.FC<Props> = ({ onSuccess, packages }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    whatsapp: '',
+    packageId: packages[0]?.id || '',
+    packageName: packages[0]?.name || '',
+    message: ''
+  });
+
+  const handlePackageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const pkg = packages.find(p => p.id === e.target.value);
+    if (pkg) {
+      setFormData({
+        ...formData,
+        packageId: pkg.id,
+        packageName: pkg.name
+      });
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
+    
+    // Simulate API delay
     setTimeout(() => {
+      onSuccess({
+        name: formData.name,
+        whatsapp: formData.whatsapp,
+        packageId: formData.packageId,
+        packageName: formData.packageName,
+        message: formData.message
+      });
       setIsSubmitting(false);
       setIsSuccess(true);
-    }, 1500);
+      // Reset form
+      setFormData({
+        name: '',
+        whatsapp: '',
+        packageId: packages[0]?.id || '',
+        packageName: packages[0]?.name || '',
+        message: ''
+      });
+    }, 1200);
   };
 
   if (isSuccess) {
     return (
-      <div className="bg-white p-10 rounded-3xl shadow-2xl text-center border-t-8 border-emerald-500">
+      <div className="bg-white p-10 rounded-3xl shadow-2xl text-center border-t-8 border-emerald-500 animate-scale-up">
         <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <svg className="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -47,6 +88,8 @@ const BookingForm: React.FC = () => {
             <input 
               required
               type="text" 
+              value={formData.name}
+              onChange={(e) => setFormData({...formData, name: e.target.value})}
               placeholder="Sesuai KTP"
               className="w-full px-5 py-4 rounded-xl bg-gray-50 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
             />
@@ -56,6 +99,8 @@ const BookingForm: React.FC = () => {
             <input 
               required
               type="tel" 
+              value={formData.whatsapp}
+              onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
               placeholder="0812-xxxx-xxxx"
               className="w-full px-5 py-4 rounded-xl bg-gray-50 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
             />
@@ -64,17 +109,30 @@ const BookingForm: React.FC = () => {
 
         <div className="space-y-2">
           <label className="text-sm font-semibold text-gray-700">Paket yang Diminati</label>
-          <select className="w-full px-5 py-4 rounded-xl bg-gray-50 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all appearance-none cursor-pointer">
-            <option>Umroh Reguler Hemat</option>
-            <option>Umroh VIP Premium</option>
-            <option>Umroh Plus Turki</option>
-          </select>
+          <div className="relative">
+            <select 
+              value={formData.packageId}
+              onChange={handlePackageChange}
+              className="w-full px-5 py-4 rounded-xl bg-gray-50 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all appearance-none cursor-pointer"
+            >
+              {packages.map(pkg => (
+                <option key={pkg.id} value={pkg.id}>{pkg.name} - Rp {pkg.price}</option>
+              ))}
+            </select>
+            <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-2">
           <label className="text-sm font-semibold text-gray-700">Pesan / Catatan Khusus</label>
           <textarea 
             rows={4}
+            value={formData.message}
+            onChange={(e) => setFormData({...formData, message: e.target.value})}
             placeholder="Misal: Rencana berangkat untuk 4 orang..."
             className="w-full px-5 py-4 rounded-xl bg-gray-50 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all resize-none"
           ></textarea>

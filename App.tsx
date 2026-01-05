@@ -82,6 +82,16 @@ const App: React.FC = () => {
     setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
   };
 
+  const handleNewBooking = (bookingData: Omit<BookingSubmission, 'id' | 'date' | 'status'>) => {
+    const newBooking: BookingSubmission = {
+      ...bookingData,
+      id: `B${Math.floor(1000 + Math.random() * 9000)}`,
+      date: new Date().toISOString().split('T')[0],
+      status: 'Pending'
+    };
+    setBookings(prev => [newBooking, ...prev]);
+  };
+
   const handleAddPackage = (pkg: Package) => {
     setPackages(prev => [...prev, pkg]);
   };
@@ -98,7 +108,7 @@ const App: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex">
         {/* Sidebar Admin */}
-        <aside className="w-64 bg-emerald-950 text-white flex flex-col p-6 space-y-8">
+        <aside className="w-64 bg-emerald-950 text-white flex flex-col p-6 space-y-8 sticky top-0 h-screen">
           <div className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center">
               <span className="font-bold text-xl">N</span>
@@ -285,7 +295,10 @@ const App: React.FC = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div>
-              <BookingForm />
+              <BookingForm 
+                onSuccess={handleNewBooking}
+                packages={packages}
+              />
             </div>
             
             <div id="faq">
@@ -327,48 +340,24 @@ const App: React.FC = () => {
 
       {/* Footer with Admin Link */}
       <footer className="bg-white border-t border-gray-100 py-12">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div className="col-span-1 md:col-span-1">
-              <div className="flex items-center space-x-2 mb-6">
-                <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">N</span>
-                </div>
-                <span className="text-xl font-bold text-emerald-800">Nurul Haramain</span>
-              </div>
-              <p className="text-gray-500 text-sm leading-relaxed">
-                Partner spiritual amanah untuk perjalanan Umroh & Hajj Anda.
-              </p>
-              <button 
-                onClick={() => setView('CRM')}
-                className="mt-6 text-[10px] text-gray-300 hover:text-emerald-600 transition-colors uppercase tracking-widest font-bold"
-              >
-                Admin Access
-              </button>
+        <div className="container mx-auto px-4 md:px-6 text-center">
+          <div className="flex items-center justify-center space-x-2 mb-8">
+            <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-xl">N</span>
             </div>
-            <div>
-              <h5 className="font-bold mb-6">Tautan Cepat</h5>
-              <ul className="space-y-3 text-sm text-gray-500">
-                <li><a href="#home" className="hover:text-emerald-600">Home</a></li>
-                <li><a href="#paket" className="hover:text-emerald-600">Paket Umroh</a></li>
-                <li><a href="#fasilitas" className="hover:text-emerald-600">Fasilitas</a></li>
-              </ul>
-            </div>
-            <div>
-              <h5 className="font-bold mb-6">Legalitas</h5>
-              <ul className="space-y-3 text-sm text-gray-500">
-                <li>Izin Kemenag No. 123/2023</li>
-                <li>Sertifikasi PPIU</li>
-                <li>Kebijakan Privasi</li>
-              </ul>
-            </div>
-            <div>
-              <h5 className="font-bold mb-6">WhatsApp</h5>
-              <p className="text-sm text-gray-500">+62 812 3456 7890</p>
-            </div>
+            <span className="text-xl font-bold text-emerald-800">Nurul Haramain</span>
           </div>
-          <div className="pt-8 border-t border-gray-100 text-center text-sm text-gray-400">
+          <p className="text-gray-500 mb-8 max-w-md mx-auto">
+            Partner spiritual amanah untuk perjalanan Umroh & Hajj Anda. Pelayanan VVIP untuk kekhusyukan ibadah.
+          </p>
+          <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
             <p>&copy; 2024 Nurul Haramain Travel. Seluruh Hak Cipta Dilindungi.</p>
+            <button 
+              onClick={() => setView('CRM')}
+              className="mt-4 md:mt-0 text-[10px] text-gray-300 hover:text-emerald-600 transition-colors uppercase tracking-widest font-bold"
+            >
+              Admin Panel
+            </button>
           </div>
         </div>
       </footer>

@@ -17,6 +17,7 @@ export const getGeminiResponse = async (userMessage: string) => {
         - Office: Jakarta, Indonesia.
         Always encourage the user to fill out the booking form on the website for further details.`,
         temperature: 0.7,
+        thinkingConfig: { thinkingBudget: 2000 }
       },
     });
 
